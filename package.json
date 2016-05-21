@@ -1,0 +1,19 @@
+{
+  "name": "express-pipeline",
+  "version": "0.0.1",
+  "description": "Pipeline factory for Express-like middlewares",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/greduan/express-pipeline.git"
+  },
+  "author": "Eduardo Lavaque <me@greduan.com> (http://greduan.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/greduan/express-pipeline/issues"
+  },
+  "homepage": "https://github.com/greduan/express-pipeline#readme"
+}
