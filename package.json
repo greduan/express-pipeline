@@ -1,8 +1,8 @@
 {
   "name": "express-pipeline",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Pipeline factory for Express-like middlewares",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha"
   },

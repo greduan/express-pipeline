@@ -5,6 +5,12 @@ project adheres to [Semantic Versioning][sm].
 
 [sm]: http://semver.org
 
+## 1.1.0 - 2016-05-21
+
+### Fixed
+
+- `package.json`'s `main` field was pointing to the wrong file.
+
 ## 1.0.0 - 2016-05-21
 
 ### Added
