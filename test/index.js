@@ -74,4 +74,32 @@ describe('express-pipeline', function () {
     assert.deepEqual(res, { a: 'a', b: 'b' });
   });
 
+  it('Should be useable with nested pipelines', function () {
+    var req = {}, res = {};
+
+    var res = pipe([
+      pipe([
+        function (req, res, next) {
+          req.a = 'a';
+          res.a = 'a';
+
+          next(null);
+        },
+      ]),
+      pipe([
+        function (req, res, next) {
+          req.b = 'b';
+          res.b = 'b';
+
+          next(null);
+        },
+      ]),
+    ]);
+
+    res(req, res, td.function());
+
+    assert.deepEqual(req, { a: 'a', b: 'b' });
+    assert.deepEqual(res, { a: 'a', b: 'b' });
+  });
+
 });
