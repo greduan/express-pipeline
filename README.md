@@ -9,7 +9,9 @@ groups under another group, and so on.
 
 One limitation is that at the moment they do not support accepting an
 `err`, in other words this package does not at this moment work for
-pipelining error handling.
+pipelining error handling.  That does not mean you cannot pass an
+`err` to `next()` though, it just means your middlewares cannot have 4
+arguments (first of which is `err`).
 
 ## Usage
 
