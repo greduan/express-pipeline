@@ -14,8 +14,7 @@ In essence it's a middleware grouper.
 ## Constraints
 
 - Middleware internals must be defined in the same fashion as Express
-  middlewares, so that the same middleware can be used with or without
-  express-pipeline.
+  middlewares.
 
 ## Assumptions
 
@@ -52,20 +51,32 @@ module.exports = function (req, res, next) {
 ## Code snippets
 
 ```
-var browser = pipe([
-  acceptHtml,
-  jwt,
+var pipe = require('express-pipeline');
+
+// some middlewares
+var loadUser = function (req, res, next) { next() };
+var loadFiles = function (req, res, next) { next() };
+var loadInfo = function (req, res, next) { next() };
+var session = function (req, res, next) { next() };
+var token = function (req, res, next) { next() };
+
+// couple of pipelines
+var loadStuffPipe = pipe([
+  loadUser,
+  loadFiles,
+  loadInfo,
 ]);
 
-var api = pipe([
-  acceptJson,
-  jwt,
+var securityPipe = pipe([
+  session,
+  token,
 ]);
 
-var resourcePipe = pipe([
-  browser,
-  api,
+var userPipeline = pipe([
+  loadStuffPipe,
+  securityPipe,
 ]);
 
-app.all('/Users/*', resourcePipe);
+// Express app
+app.all('/Users/*', userPipeline);
 ```
