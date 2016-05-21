@@ -49,17 +49,6 @@ module.exports = function (req, res, next) {
 };
 ```
 
-However, the pipeline should support that the middlewares passed to it
-return a promise instead of a callback.  If called without the third
-argument (`next`) they'll expect a promise.
-
-```
-module.exports = function (req, res) {
-  req.role = 'Visitor';
-  return Promise.resolve();
-};
-```
-
 ## Code snippets
 
 ```
