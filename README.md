@@ -7,6 +7,10 @@ are run in the order you define.
 These middleware groups are nestable, so you can have one or more
 groups under another group, and so on.
 
+One limitation is that at the moment they do not support accepting an
+`err`, in other words this plugin, at the moment, does not work for
+pipelining error handling.
+
 ## Usage
 
 ```
