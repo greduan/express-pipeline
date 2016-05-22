@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/express-pipeline.png)](https://nodei.co/npm/express-pipeline/)
+
 # express-pipeline
 
 express-pipeline allows you to put under one name a set of
