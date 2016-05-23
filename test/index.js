@@ -5,7 +5,7 @@ var assert = require('assert');
 
 describe('express-pipeline', function () {
 
-  var pipe = require(__dirname + '/../lib/index.js');
+  var pipe = require(__dirname + '/..');
 
   it('Should return a function', function () {
     var res = pipe([]);
@@ -17,12 +17,8 @@ describe('express-pipeline', function () {
     var cb = td.function();
 
     var res = pipe([
-      function (req, res, next) {
-        next(null);
-      },
-      function (req, res, next) {
-        next(null);
-      },
+      function (req, res, next) { next() },
+      function (req, res, next) { next() },
     ]);
 
     res({}, {}, cb);
@@ -30,76 +26,121 @@ describe('express-pipeline', function () {
     td.verify(cb(null));
   });
 
-  it('Should call final callback with error', function () {
+  it('Should call middlewares in same order they were provided', function () {
     var cb = td.function();
+    var call = td.function();
 
     var res = pipe([
       function (req, res, next) {
-        next(null);
+        call('first');
+        next();
       },
       function (req, res, next) {
-        next(new Error('foo'));
+        call('second');
+        next();
       },
       function (req, res, next) {
+        call('third');
+        next();
+      },
+      function (req, res, next) {
+        call('fourth');
+        next();
+      },
+    ]);
+
+    res({}, {}, cb);
+
+    td.verify(call('first'));
+    td.verify(call('second'));
+    td.verify(call('third'));
+    td.verify(call('fourth'));
+    td.verify(cb(null));
+  });
+
+  it('Should pass error to final callback and skip rest of middlewares', function () {
+    var noCall = td.function();
+    var cb = td.function();
+
+    var res = pipe([
+      function (req, res, next) { next(new Error('foo')) },
+      function (req, res, next) {
+        noCall('oops');
         next(null);
       },
     ]);
 
     res({}, {}, cb);
 
+    td.verify(noCall(), { times: 0 });
     td.verify(cb(new Error('foo')));
   });
 
   it('Should pass around the same req and res objects', function () {
-    var req = {}, res = {};
+    var cb = td.function();
+
+    var req = {},
+      res = {};
 
     var res = pipe([
       function (req, res, next) {
-        req.a = 'a';
-        res.a = 'a';
+        req.a = 1;
+        res.a = 1;
 
         next(null);
       },
       function (req, res, next) {
-        req.b = 'b';
-        res.b = 'b';
+        req.b = 2;
+        res.b = 2;
 
         next(null);
       },
     ]);
 
-    res(req, res, td.function());
+    res(req, res, cb);
 
-    assert.deepEqual(req, { a: 'a', b: 'b' });
-    assert.deepEqual(res, { a: 'a', b: 'b' });
+    assert.deepEqual(req, { a: 1, b: 2 });
+    assert.deepEqual(res, { a: 1, b: 2 });
+    td.verify(cb(null));
   });
 
-  it('Should be useable with nested pipelines', function () {
-    var req = {}, res = {};
+  it('Should work with nested pipelines', function () {
+    var cb = td.function();
 
     var res = pipe([
       pipe([
-        function (req, res, next) {
-          req.a = 'a';
-          res.a = 'a';
+        function (req, res, next) { next() },
+      ]),
+      pipe([
+        function (req, res, next) { next() },
+      ]),
+    ]);
 
-          next(null);
-        },
+    res({}, {}, cb);
+
+    td.verify(cb(null));
+  });
+
+  it('Should pass error with nested pipelines and skip the rest of the pipelines', function () {
+    var cb = td.function();
+    var noCall = td.function();
+
+    var res = pipe([
+      pipe([
+        function (req, res, next) { next(new Error('foo')) },
       ]),
       pipe([
         function (req, res, next) {
-          req.b = 'b';
-          res.b = 'b';
-
-          next(null);
+          noCall('oops');
+          next();
         },
       ]),
     ]);
 
-    res(req, res, td.function());
+    res({}, {}, cb);
 
-    assert.deepEqual(req, { a: 'a', b: 'b' });
-    assert.deepEqual(res, { a: 'a', b: 'b' });
+    td.verify(noCall(), { times: 0 });
+    td.verify(cb(new Error('foo')));
   });
 
 });
