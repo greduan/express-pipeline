@@ -32,7 +32,24 @@ In essence it's a middleware grouper.
  *
  * @method pipe
  * @param {Array} middlewares Express-like middlewares
- * @return {Function} Express-like middleware
+ * @return {Function} pipeline Express-like middleware
+ */
+```
+
+#### `.error`
+
+The `express-pipeline` will return a function that has a property which will be
+the following:
+
+```
+/**
+ * Takes in an array of Express-like middlewares that take 4 arguments, i.e. are
+ * error handlers, and returns an Express-like error handling middleware which
+ * executes the middlewares it was given in the order it was given them.
+ *
+ * @method errorPipe
+ * @param {Array} middlewares Express-like error handling middlewares
+ * @return {Function} errorPipeline Express-like error handling middleware
  */
 ```
 
